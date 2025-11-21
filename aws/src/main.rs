@@ -1,13 +1,13 @@
-use std::io;
+// #![no_std]
 
-use crate::support::_filesystem;
+use std::io;
 mod support;
 
 fn _d001() {
     let mut s: String = String::from("Hello, world");
     println!("{}", s);
 
-    s.push_str("!");    
+    s.push_str("!");
     println!("String {}", s);
     println!("Size: {}", s.len());
     println!("Length: {}", s.chars().count());
@@ -42,9 +42,24 @@ fn _d002() {
     for a in array { print!("{a} ") }
     println!();
 
-    _filesystem();
+    let d: String =  support::_filesystem();
+    println!("{d}");
+}
+
+fn _d003() {
+    const SEP: &str = " ";
+    let string: &str = "Xin chào thế giới";
+    let count: usize = support::_count(string, SEP);
+    println!("{count}");
+
+    let mut array: [&str; 5] = [""; 5];
+    support::_split(&mut array, string, SEP);
+
+    for str in array {
+        println!("{str}");
+    }
 }
 
 fn main() {
-    _d002();
+    _d003();
 }
