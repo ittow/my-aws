@@ -1,6 +1,10 @@
-// #![no_std]
-
 use std::io;
+use std::time;
+use chrono::DateTime;
+use chrono::NaiveDate;
+use chrono::NaiveDateTime;
+use chrono::Utc;
+
 mod support;
 
 fn _d001() {
@@ -49,17 +53,55 @@ fn _d002() {
 fn _d003() {
     const SEP: &str = " ";
     let string: &str = "Xin chào thế giới";
-    let count: usize = support::_count(string, SEP);
-    println!("{count}");
+    support::_count(string, SEP);
+}
 
-    let mut array: [&str; 5] = [""; 5];
-    support::_split(&mut array, string, SEP);
+fn _d004() {
+    support::_hello();
 
-    for str in array {
-        println!("{str}");
-    }
+    let start: time::Instant = time::Instant::now();
+    println!("{:?}", start.elapsed());
+
+    let duration: time::Duration = time::Duration::from_secs(100);
+    println!("{:?}", duration);
+
+    let begin: NaiveDateTime = NaiveDate::from_ymd_opt(2025, 2, 1).unwrap().and_hms_opt(17, 24, 59).unwrap();
+    let brust: NaiveDateTime = NaiveDate::from_ymd_opt(2025, 11, 19).unwrap().and_hms_opt(12, 42, 35).unwrap();
+
+    let now: DateTime<Utc> = Utc::now();
+
+    // println!("{}", ndt);
+    // println!("{}", ndt.time());
+    // println!("{}", ndt.date());
+    // println!("{}", ndt.second());
+    // println!("{}", ndt.and_utc().timestamp());
+
+    // println!("{}", now.timestamp());
+
+    let start: i64 = begin.and_utc().timestamp();
+    let rstart: i64 = brust.and_utc().timestamp();
+
+    let end: i64 = now.timestamp();
+    // println!("{}", end - start);
+    let delta: i64 = end - start;
+    let rdelta: i64 = end - rstart;
+
+    let year: i64 = delta / 31557600;
+    let day: i64 = delta % 31557600 / 86400;
+    let hour: i64 = delta % 31557600 % 86400 / 3600;
+    let min: i64 = delta % 31557600 % 86400 % 3600 / 60;
+    let sec: i64 = delta % 31557600 % 86400 % 3600 % 60;
+
+    let ryear: i64 = rdelta / 31557600;
+    let rday: i64 = rdelta % 31557600 / 86400;
+    let rhour: i64 = rdelta % 31557600 % 86400 / 3600;
+    let rmin: i64 = rdelta % 31557600 % 86400 % 3600 / 60;
+    let rsec: i64 = rdelta % 31557600 % 86400 % 3600 % 60;
+
+    println!("Start programming: {year:02}:{day:02}:{hour:02}:{min:02}:{sec:02}");
+    println!("Start with Rust: {ryear:02}:{rday:02}:{rhour:02}:{rmin:02}:{rsec:02}:")
 }
 
 fn main() {
-    _d003();
+    _d004();
 }

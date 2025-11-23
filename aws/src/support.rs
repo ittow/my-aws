@@ -62,8 +62,8 @@ pub fn _filesystem() -> String {
 }
 
 pub fn _count(string: &str, sep: &str) -> usize {
-    let mut count = 0;
-    let mut start = 0;
+    let mut count: usize = 0;
+    let mut start: usize = 0;
 
     while let Some(pos) = string[start..].find(sep) {
         count += 1;
@@ -72,7 +72,6 @@ pub fn _count(string: &str, sep: &str) -> usize {
     return count;
 }
 
-pub fn _split<'a>(array: &mut [&'a str], string: &str, sep: &str) {
-    array[0] = "H";
-    println!("count >> {} | {} | {}", array.len(), string, sep);
+pub fn _hello() {
+    println!("Hello World");   
 }
