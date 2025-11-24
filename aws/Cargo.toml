@@ -11,5 +11,3 @@ panic = "abort"
 
 [profile.dev]
 panic = "abort"
-
-chrono = { version = "0.4", features = ["serde"] }

@@ -1,0 +1,4 @@
+[dependencies]
+chrono = "0.4"
+\n
+chrono = { version = "0.4", features = ["serde"] }
