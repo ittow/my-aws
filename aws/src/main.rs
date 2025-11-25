@@ -5,6 +5,7 @@ use std::io;
 use std::io::Read;
 use std::io::Error;
 use std::path::Path;
+use std::time;
 
 mod support;
 
@@ -73,9 +74,10 @@ fn _d005() {
     let mut string_seconds: String = String::new();
     io::stdin().read_line(&mut string_seconds)
         .expect("Không thể đọc dữ liệu");
+    
 
     println!("stdin - string_seconds: {:?}", string_seconds);
-    let isdigit: bool = support::_isdigi(&string_seconds.to_string());
+    let isdigit: bool = support::_isdigi(&string_seconds);
     println!("isdigit: {}", isdigit);
     if !isdigit {
         println!("Đây không phải số nguyên!");
@@ -93,7 +95,56 @@ fn _d005() {
     println!("{:02} {:02}:{:02}:{:02}", days, hours, mins, secs);
 }
 
+fn _d006() {
+    // Viết thuật toán nhập số ngày ra Month Day + suffix, Year
+    let mut str_day: String = String::new();
+    let resopt: Result<usize, Error> = io::stdin().read_line(&mut str_day);
+    if let Err(error) = resopt {
+        println!("Có lỗi đọc dữ liệu: {}", error);
+        return;    
+    }
+
+    let isdigit: bool = support::_isdigi(&str_day);
+    if !isdigit {
+        println!("Đây không phải số nguyên dương -> {}", str_day);
+        return;
+    }
+
+    let total_day: i64 = match str_day.trim().parse() {
+        Ok(value) => value,
+        Err(error) => {
+            println!("Lỗi xử lý chuyển đổi số nguyên: {}", error);
+            return;
+        }
+    };
+
+    println!("Total day: {}", total_day);
+    let _months: [i64; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    // Lấy tạm một tháng là 30 ngày
+
+    
+    // let year: i64 = total_day / 365;
+    // let total_leap_year: i64 = support::_total_leap_year(year);
+    
+    // let fday: i64 = (total_day + total_leap_year) % 365;
+    // let tday: [i64; 2] = support::_num_month(fday, year);
+    
+    // let day: i64 = fday - tday[0];
+    // let mon: i64 = tday[1];
+    
+    // let sfx: String = support::_suffix_day(day);
+    // let tit_mon: String = support::_title_month(mon);
+    
+    // println!("{} {}{}, {:04}", tit_mon, day, sfx, year);
+    let year_and_day: [i64; 2] = support::_year_and_day(total_day);
+    let month_and_day: [i64; 2] = support::_month_and_day(year_and_day[1], year_and_day[0]);
+    println!("Year: {}; Day: {}", year_and_day[0], year_and_day[1]);
+    println!("Month: {}; Day: {}", month_and_day[0], month_and_day[1]);
+}
+
 fn main() {
-    support::_hello();
-    _d005();
+    let start: time::Instant = support::_hello();
+    // Code here
+    _d006();
+    support::_the_end(start);
 }

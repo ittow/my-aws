@@ -2,6 +2,7 @@ use chrono::NaiveDate;
 use chrono::NaiveDateTime;
 use chrono::Utc;
 use std::fs;
+use std::time;
 
 pub fn _add(a: i64, b: i64) -> i64 {
     return a + b;
@@ -34,6 +35,12 @@ pub fn _isdigf(s: &str) -> bool {
         }
     }
     return true;
+}
+
+pub fn _is_leap_year(year: i64) -> bool {
+    return year % 4 == 0
+    && (year % 100 != 0
+    || year % 400 == 0)
 }
 
 pub fn _lrsorted(array: &mut [i64]) {
@@ -99,16 +106,18 @@ fn _process(begin: NaiveDateTime) -> String {
     return fmt;
 }
 
-pub fn _hello() {
+pub fn _hello() -> time::Instant {
+    let start: time::Instant = time::Instant::now();
+
     let begin_ymd: Option<NaiveDate> = NaiveDate::from_ymd_opt(2025, 2, 1);
     let b_ymd_hms: Option<NaiveDateTime> = match begin_ymd {
         Some(k) => k.and_hms_opt(17, 24, 59),
-        None => {return;}
+        None => {return start;}
     };
 
     let begin: NaiveDateTime = match b_ymd_hms {
         Some(k) => k,
-        None => {return;}
+        None => {return start;}
     };
 
     let start_programming: String = _process(begin);
@@ -117,15 +126,122 @@ pub fn _hello() {
     let brust_ymd: Option<NaiveDate> = NaiveDate::from_ymd_opt(2025, 11, 1);
     let r_ymd_hms: Option<NaiveDateTime> = match brust_ymd {
         Some(k) => k.and_hms_opt(14, 36, 9),
-        None => {return;}
+        None => {return start;}
     };
 
     let brust: NaiveDateTime = match r_ymd_hms {
         Some(k) => k,
-        None => {return;}
+        None => {return start;}
     };
 
     let start_with_rust: String = _process(brust);
     println!("Start with Rust: {}", start_with_rust);
     println!("Hello World");
+    
+    return start;
+}
+
+pub fn _the_end(start: time::Instant) {
+    let elapsed: u128 = start.elapsed().as_micros();
+    println!("Running in {} µs", elapsed);
+}
+
+pub fn _title_month(nummon: i64) -> String {
+    let res: String = match nummon {
+        1 => String::from("Jan"),
+        2 => String::from("Feb"),
+        3 => String::from("Mar"),
+        4 => String::from("Apr"),
+        5 => String::from("May"),
+        6 => String::from("Jun"),
+        7 => String::from("Jul"),
+        8 => String::from("Aug"),
+        9 => String::from("Sep"),
+        10 => String::from("Oct"),
+        11 => String::from("Nov"),
+        12 => String::from("Dec"),
+        _ => String::from("Jan")
+    };
+
+    return res;
+}
+
+pub fn _suffix_day(day: i64) -> String {
+    if 11 <= day && day <= 13 {
+        return String::from("th");
+    }
+
+    let sfx: String = match day % 10 {
+        1 => String::from("st"),
+        2 => String::from("nd"),
+        3 => String::from("rd"),
+        _ => String::from("th")
+    };
+
+    return sfx;
+}
+
+pub fn _total_leap_year(year: i64) -> i64 {
+    let y4: i64 = year / 4;
+    let y100: i64 = year / 100;
+    let y400: i64 = year / 400;
+
+    return y4 + y400 - y100;
+}
+
+pub fn _num_month(day: i64, year: i64) -> [i64; 2] {
+    let mut _months: [i64; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if _is_leap_year(year) {
+        _months[1] = 29;
+    }
+
+    let mut t: [i64; 2] = [0; 2];
+    let mut d: i64 = 0;
+    for (i, v) in _months.iter().enumerate() {
+        d += v;
+        if day < d {
+            t = [i as i64, d - v];
+            return t;
+        }
+    }
+
+    return t;
+}
+
+pub fn _year_and_day(day: i64) -> [i64; 2] {
+    let mut d: i64 = day;
+    let mut year: i64 = 0;
+    loop {
+        let is_leap_year: bool = _is_leap_year(year);
+        if is_leap_year && d > 366 {
+            d -= 366;
+            year += 1;
+        } else
+        if !is_leap_year && d > 365 {
+            d -= 365;
+            year += 1;
+        } else {
+            return [year, d];
+        }
+    }
+}
+
+pub fn _month_and_day(day: i64, year: i64) -> [i64; 2] {
+    let mut _months: [i64; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if _is_leap_year(year) {
+        _months[1] = 29;
+    }
+
+    let mut d: i64 = day;
+    let mut t: [i64; 2] = [0; 2];
+
+    for (i, v) in _months.iter().enumerate() {
+        d -= v;
+        if d < 0 {
+            t = [i as i64 + 1, d + v];
+            return t;
+        }
+    }
+
+    return t;
 }
