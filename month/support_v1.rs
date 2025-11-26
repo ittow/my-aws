@@ -4,6 +4,18 @@ use chrono::Utc;
 use std::fs;
 use std::time;
 
+pub fn _add(a: i64, b: i64) -> i64 {
+    return a + b;
+}
+
+pub fn _sqal(n: f64, b: i8) -> f64 {
+    let mut t = n;
+    for _ in 1..b {
+        t *= n;
+    }
+    return t;
+}
+
 pub fn _isdigu(s: &str) -> bool {
     for chr in s.chars() {
         if !('0' <= chr && chr <= '9')
@@ -15,31 +27,20 @@ pub fn _isdigu(s: &str) -> bool {
 }
 
 pub fn _isdigf(s: &str) -> bool {
-    let mut hasc: bool = false;
-    for (idx, chr) in s.chars().enumerate() {
-
-        // Nếu là dấu chấm
-        if chr == '.' {
-            // Nếu chưa từng có dấu chấm
-            // Và vị trí dấu chấm không phải 0
-            if !hasc && idx != 0 {
-                hasc = true;
-                continue;
-            // Nếu đã có dấu chấm
-            // Hoặc vị trí ở 0
-            } else {
-                return false;
-            }
-        }
-
-        // Nếu không nằm từ 0 đến 9
-        // Và Không phải ký tự điều khiển
+    for (i, chr) in s.chars().enumerate() {
+        if i == 0 && chr == '.' || i == s.chars().count() - 1 && chr == '.' {continue}
         if !('0' <= chr && chr <= '9')
         && !(chr == '\r' || chr == '\n') {
             return false;
         }
     }
     return true;
+}
+
+pub fn _is_leap_year(year: i64) -> bool {
+    return year % 4 == 0
+    && (year % 100 != 0
+    || year % 400 == 0)
 }
 
 pub fn _lrsorted(array: &mut [i64]) {
@@ -110,12 +111,12 @@ pub fn _hello() -> time::Instant {
 
     let begin_ymd: Option<NaiveDate> = NaiveDate::from_ymd_opt(2025, 2, 1);
     let b_ymd_hms: Option<NaiveDateTime> = match begin_ymd {
-        Some(value) => value.and_hms_opt(17, 24, 59),
+        Some(k) => k.and_hms_opt(17, 24, 59),
         None => {return start;}
     };
 
     let begin: NaiveDateTime = match b_ymd_hms {
-        Some(value) => value,
+        Some(k) => k,
         None => {return start;}
     };
 
@@ -124,18 +125,18 @@ pub fn _hello() -> time::Instant {
 
     let brust_ymd: Option<NaiveDate> = NaiveDate::from_ymd_opt(2025, 11, 1);
     let r_ymd_hms: Option<NaiveDateTime> = match brust_ymd {
-        Some(value) => value.and_hms_opt(14, 36, 9),
+        Some(k) => k.and_hms_opt(14, 36, 9),
         None => {return start;}
     };
 
     let brust: NaiveDateTime = match r_ymd_hms {
-        Some(value) => value,
+        Some(k) => k,
         None => {return start;}
     };
 
     let start_with_rust: String = _process(brust);
     println!("Start with Rust: {}", start_with_rust);
-    println!("Hello, world!");
+    println!("Hello World");
     
     return start;
 }
@@ -145,26 +146,20 @@ pub fn _the_end(start: time::Instant) {
     println!("Running in {} µs", elapsed);
 }
 
-pub fn _is_leap_year(year: i64) -> bool {
-    return year % 4 == 0
-    && (year % 100 != 0
-    || year % 400 == 0)
-}
-
 pub fn _title_month(month: i64) -> String {
     let res: String = match month {
-        0 => String::from("January"),
-        1 => String::from("February"),
-        2 => String::from("March"),
-        3 => String::from("April"),
-        4 => String::from("May"),
-        5 => String::from("June"),
-        6 => String::from("July"),
-        7 => String::from("August"),
-        8 => String::from("September"),
-        9 => String::from("October"),
-        10 => String::from("November"),
-        11 => String::from("December"),
+        1 => String::from("January"),
+        2 => String::from("February"),
+        3 => String::from("March"),
+        4 => String::from("April"),
+        5 => String::from("May"),
+        6 => String::from("June"),
+        7 => String::from("July"),
+        8 => String::from("August"),
+        9 => String::from("September"),
+        10 => String::from("October"),
+        11 => String::from("November"),
+        12 => String::from("December"),
         _ => String::from("January")
     };
 
@@ -184,6 +179,33 @@ pub fn _suffix_day(day: i64) -> String {
     };
 
     return sfx;
+}
+
+pub fn _total_leap_year(year: i64) -> i64 {
+    let y4: i64 = year / 4;
+    let y100: i64 = year / 100;
+    let y400: i64 = year / 400;
+
+    return y4 + y400 - y100;
+}
+
+pub fn _num_month(day: i64, year: i64) -> [i64; 2] {
+    let mut _months: [i64; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if _is_leap_year(year) {
+        _months[1] = 29;
+    }
+
+    let mut t: [i64; 2] = [0; 2];
+    let mut d: i64 = 0;
+    for (i, v) in _months.iter().enumerate() {
+        d += v;
+        if day < d {
+            t = [i as i64, d - v];
+            return t;
+        }
+    }
+
+    return t;
 }
 
 pub fn _year_and_day(day: i64) -> [i64; 2] {
@@ -222,55 +244,4 @@ pub fn _month_and_day(day: i64, year: i64) -> [i64; 2] {
     }
 
     return t;
-}
-
-pub fn _seconds_to_hms(seconds: i64) -> [i64; 3] {
-    let hours: i64 = seconds / 3600;
-    let mints: i64 = seconds % 3600 / 60;
-    let secos: i64 = seconds % 60;
-
-    return [hours, mints, secos];
-}
-
-pub fn _day_in_week(days: i64) -> String {
-    let e: i64 = days % 7;
-    let t: String = match e {
-        0 => String::from("Monday"),
-        1 => String::from("Tuesday"),
-        2 => String::from("Wednesday"),
-        3 => String::from("Thursday"),
-        4 => String::from("Friday"),
-        5 => String::from("Saturday"),
-        6 => String::from("Sunday"),
-        _ => String::from("Monday")
-    };
-
-    return t;
-}
-
-pub fn _seconds_format(seconds: i64) -> String {
-    // Viết thuật toán nhập số ngày ra Month Day + suffix, Year
-    let total_day: i64 = seconds / 86400;
-    let t_seconds: i64 = seconds % 86400;
-    let hms: [i64; 3] = _seconds_to_hms(t_seconds);
-    let diw: String = _day_in_week(total_day);
-
-    let year_and_day: [i64; 2] = _year_and_day(total_day);
-    let month_and_day: [i64; 2] = _month_and_day(year_and_day[1], year_and_day[0]);
-
-    let years: i64 = year_and_day[0];
-    let days: i64 = month_and_day[1] + 1;
-    let suffix_day: String = _suffix_day(days);
-    let title_month: String = _title_month(month_and_day[0]);
-
-    let hours: i64 = hms[0];
-    let apm: &str = if hours < 12 {"AM"} else {"PM"};
-    let mut hours_apm: i64 = hours % 12;
-
-    if hours_apm == 0 {
-        hours_apm = 12;
-    }
-
-    let fmt: String = format!("{:02}:{:02}:{:02} {} - {}, {} {}{}, {:04}", hours_apm, hms[1], hms[2], apm, diw, title_month, days, suffix_day, years);
-    return fmt;
 }
