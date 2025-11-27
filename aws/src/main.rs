@@ -2,60 +2,42 @@ use std;
 
 mod support;
 
-fn _d007() {
-    let mut str_seconds: String = String::new();
-    let resopt: Result<usize, std::io::Error> = std::io::stdin().read_line(&mut str_seconds);
-    if let Err(error) = resopt {
-        println!("Có lỗi đọc dữ liệu: {}", error);
-        return;    
+fn _d008() {
+    // Viết code chuyển hex 0x00000000 sang rgba(255, 255, 255, 255)
+    let color_hex: String = "74ff4a90".to_lowercase();
+    let mut color: [u8; 8] = [0; 8];
+    for (i, c) in color_hex.chars().enumerate() {
+        let num8: u8 = support::_hex8_to_num(c);
+        color[i] = num8;
     }
 
-    let isdigit: bool = support::_isdigu(&str_seconds);
-    if !isdigit {
-        println!("Đây không phải số nguyên dương -> {}", str_seconds);
-        return;
+    let mut rgba: [u8; 4] = [0; 4];
+
+    for (index, _) in color.iter().enumerate() {
+        // Chỉ tính số lẻ
+        if index % 2 != 0 {continue;}
+
+        let arr16: [u8; 2] = [color[index], color[index+1]];
+        rgba[index / 2] = arr16[0] * 16 + arr16[1];
     }
 
-    let total_seconds: i64 = match str_seconds.trim().parse() {
-        Ok(value) => value,
-        Err(error) => {
-            println!("Lỗi xử lý chuyển đổi số nguyên: {}", error);
-            return;
-        }
-    };
+    println!("Color: {:?}", rgba);
+    println!("Red Green Blue Alpha: rgba({}, {}, {}, {})", rgba[0], rgba[1],  rgba[2],  rgba[3]);
 
-    println!("Total seconds: {}", total_seconds);
-    support::_seconds_format(total_seconds);
-    let s: &str = "<tag><chi></chi></tag>";
-    let mut _tag_name: String = String::from("");
+    // Thử tính year từ ngày nhưng không dùng loop
 
-    let i: usize = 0;
-    let a: char = match s.chars().nth(i) {
-        Some(value) => value,
-        None => return
-    };
+    let days: i64 = 15000;
+    let years1: [i64; 2] = [(days as f64 / 365.25) as i64 + 1, (days as f64 % 365.25) as i64];
+    let years2: [i64; 2] = support::_year_and_day(days);
 
-    if a == '<' {
-        let j: usize= match s.find('>') {
-            Some(value) => value,
-            None => return
-        };
-
-        let _tn: &str = match s.get(i+1..j) {
-            Some(value) => value,
-            None => return
-        };
-
-        _tag_name.push_str(_tn);
-    }
-
-    println!("{}", _tag_name);
-    // Việc phân tích cấu trúc như thẻ khá là mệt chủ yếu là lệnh khá dài dòng
+    println!("{:?}", years1);
+    println!("{:?}", years2);
+    // Sẽ cố độ lệch ở năm nhuận, điều này khiến số ngày không chính xác
 }
 
 fn main() {
     let start: std::time::Instant = support::_hello();
     // Code here
-    _d007();
+    _d008();
     support::_the_end(start);
 }

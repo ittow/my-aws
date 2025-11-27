@@ -1,8 +1,5 @@
-use chrono::NaiveDate;
-use chrono::NaiveDateTime;
-use chrono::Utc;
-use std::fs;
-use std::time;
+use chrono;
+use std;
 
 pub fn _isdigu(s: &str) -> bool {
     for chr in s.chars() {
@@ -68,14 +65,6 @@ pub fn _rlsorted(array: &mut [i64]) {
     }
 }
 
-pub fn _filesystem() -> String {
-    const PATH: &str = "src/text.txt";
-    let content: String = fs::read_to_string(PATH)
-        .expect("Có lỗi xảy ra: có thể file không tồn tại, hoặc đường dẫn không đúng.");
-
-    return content;
-}
-
 pub fn _count(string: &str, sep: &str) -> usize {
     let mut count: usize = 0;
     let mut start: usize = 0;
@@ -87,9 +76,9 @@ pub fn _count(string: &str, sep: &str) -> usize {
     return count;
 }
 
-fn _process(begin: NaiveDateTime) -> String {
+fn _process(begin: chrono::NaiveDateTime) -> String {
     let start: i64 = begin.and_utc().timestamp();
-    let now: i64 = Utc::now().timestamp();
+    let now: i64 = chrono::Utc::now().timestamp();
 
     let delta: i64 = now - start + 25200; // UTC + 7
 
@@ -105,16 +94,16 @@ fn _process(begin: NaiveDateTime) -> String {
     return fmt;
 }
 
-pub fn _hello() -> time::Instant {
-    let start: time::Instant = time::Instant::now();
+pub fn _hello() -> std::time::Instant {
+    let start: std::time::Instant = std::time::Instant::now();
 
-    let begin_ymd: Option<NaiveDate> = NaiveDate::from_ymd_opt(2025, 2, 1);
-    let b_ymd_hms: Option<NaiveDateTime> = match begin_ymd {
+    let begin_ymd: Option<chrono::NaiveDate> = chrono::NaiveDate::from_ymd_opt(2025, 2, 1);
+    let b_ymd_hms: Option<chrono::NaiveDateTime> = match begin_ymd {
         Some(value) => value.and_hms_opt(17, 24, 59),
         None => {return start;}
     };
 
-    let begin: NaiveDateTime = match b_ymd_hms {
+    let begin: chrono::NaiveDateTime = match b_ymd_hms {
         Some(value) => value,
         None => {return start;}
     };
@@ -122,13 +111,13 @@ pub fn _hello() -> time::Instant {
     let start_programming: String = _process(begin);
     println!("Start programming: {}", start_programming);
 
-    let brust_ymd: Option<NaiveDate> = NaiveDate::from_ymd_opt(2025, 11, 1);
-    let r_ymd_hms: Option<NaiveDateTime> = match brust_ymd {
+    let brust_ymd: Option<chrono::NaiveDate> = chrono::NaiveDate::from_ymd_opt(2025, 11, 1);
+    let r_ymd_hms: Option<chrono::NaiveDateTime> = match brust_ymd {
         Some(value) => value.and_hms_opt(14, 36, 9),
         None => {return start;}
     };
 
-    let brust: NaiveDateTime = match r_ymd_hms {
+    let brust: chrono::NaiveDateTime = match r_ymd_hms {
         Some(value) => value,
         None => {return start;}
     };
@@ -140,7 +129,7 @@ pub fn _hello() -> time::Instant {
     return start;
 }
 
-pub fn _the_end(start: time::Instant) {
+pub fn _the_end(start: std::time::Instant) {
     let elapsed: u128 = start.elapsed().as_micros();
     println!("Running in {} µs", elapsed);
 }
@@ -273,4 +262,33 @@ pub fn _seconds_format(seconds: i64) -> String {
 
     let fmt: String = format!("{:02}:{:02}:{:02} {} - {}, {} {}{}, {:04}", hours_apm, hms[1], hms[2], apm, diw, title_month, days, suffix_day, years);
     return fmt;
+}
+
+
+pub fn _hex8_to_num(c: char) -> u8 {
+    let n: u8 = match c {
+        '0' => 0,
+        '1' => 1,
+        '2' => 2,
+        '3' => 3,
+        '4' => 4,
+        '5' => 5,
+        '6' => 6,
+        '7' => 7,
+        '8' => 8,
+        '9' => 9,
+        'a' => 10,
+        'b' => 11,
+        'c' => 12,
+        'd' => 13,
+        'e' => 14,
+        'f' => 15,
+        _ => 0,
+    };
+
+    return n;
+}
+
+pub fn _hexa2_to_num(a: [u8; 2]) -> u8 {
+    return a[0] * 16 + a[1];
 }
