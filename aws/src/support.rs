@@ -267,28 +267,51 @@ pub fn _seconds_format(seconds: i64) -> String {
 
 pub fn _hex8_to_num(c: char) -> u8 {
     let n: u8 = match c {
-        '0' => 0,
-        '1' => 1,
-        '2' => 2,
-        '3' => 3,
-        '4' => 4,
-        '5' => 5,
-        '6' => 6,
-        '7' => 7,
-        '8' => 8,
-        '9' => 9,
-        'a' => 10,
-        'b' => 11,
-        'c' => 12,
-        'd' => 13,
-        'e' => 14,
-        'f' => 15,
+        '0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5,
+        '6' => 6, '7' => 7, '8' => 8, '9' => 9, 'a' => 10, 'b' => 11,
+        'c' => 12, 'd' => 13, 'e' => 14, 'f' => 15, 'g' => 16, 'h' => 17,
+        'i' => 18, 'j' => 19, 'k' => 20, 'l' => 21, 'm' => 22, 'n' => 23,
+        'o' => 24, 'p' => 25, 'q' => 26, 'r' => 27, 's' => 28, 't' => 29,
+        'u' => 30, 'v' => 31, 'w' => 32, 'x' => 33, 'y' => 34, 'z' => 35,
         _ => 0,
     };
 
     return n;
 }
 
-pub fn _hexa2_to_num(a: [u8; 2]) -> u8 {
-    return a[0] * 16 + a[1];
+// Thực hành thao tác bit
+pub fn _set(word: u8, shift: u8) -> u8 {
+    // 00110110 bây giở cần đặt bit 1 ở vị trí 3
+    // 00001000 cần shift 1 << 3
+    // --------
+    // 00111110
+    // Vậy ta sẽ dùng OR
+    return word | (1 << shift);
+}
+
+pub fn _clear(word: u8, shift: u8) -> u8 {
+    // 00110110 bây giờ cần xóa bit 1 ở vị trí 1
+    // 00000010 cần shift << 1
+    // -------- ?
+
+    // 00110110
+    // 11111101 vậy cần đảo bit
+    // Các bit cùng đúng sẽ được giữ lại
+
+    // Vậy ta sẽ dùng and + not
+    return word & (!1 << shift);
+}
+
+pub fn _toggle(word: u8, shift: u8) -> u8 {
+    // Về logic rất cơ bản
+    // Chuyển 0 thành 1 và 1 thành 0 và ngược lại
+    // Ta sẽ chỉ dùng xor
+    return word ^ (1 << shift);
+}
+
+pub fn _read(word: u8, shift: u8) -> u8 {
+    // Cái này cũng khá đơn giản
+    // Ta shift bit cần đọc về 1
+    // Sau đó dùng AND với 1 ta sẽ được giá trị 0 hoặc 1
+    return 1 & (word >> shift);
 }
