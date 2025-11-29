@@ -80,42 +80,80 @@ fn _d009() {
     
     println!("Tatal 10: {}", total);
     {
-        let word: u8 = 74;  // 01001010 = 74
-        let shift: u8 = 2;  // 00000100 = shift 2
+        let mut word: u8 = 74;  // 01001010 = 74
         
+        let mut shift: u8 = 2;
         //  Kết quả mong muốn: 01001110 = 78
-        let result: u8 = support::_set(word, shift);
-        println!("Result: {0} / Bit: {0:0b}", result);
+        support::_set(&mut word, shift);
+        println!("Result: {0} / Bit: {0:0b}", word);
+
+        shift = 1;
+        //  Kết quả mong muốn: 01001100 = 76
+        support::_clear(&mut word, shift);
+        println!("Result: {0} / Bit: {0:0b}", word);
+
+        shift = 0;
+        //  Kết quả mong muốn: 01001101 = 77
+        support::_toggle(&mut word, shift);
+        println!("Result: {0} / Bit: {0:0b}", word);
+
+        shift = 7;
+        //  Kết quả mong muốn: 00000000 = 0
+        support::_read(&mut word, shift);
+        println!("Result: {0} / Bit: {0:0b}", word);
     }
-    {
-        let word: u8 = 74;  // 01001010 = 74
-        let shift: u8 = 1;  // 00000010 = shift 1
-        
-        //  Kết quả mong muốn: 01001000 = 72
-        let result: u8 = support::_clear(word, shift);
-        println!("Result: {0} / Bit: {0:0b}", result);
+}
+
+fn _d010() {
+    let string: String = String::from(" < \"What are\\\n you\\\" doing?\">");
+    let substr: Option<&str> = support::_parse_string(&string);
+    println!("Substring: {:?}", substr);
+
+    let mut list_search: [&str; 50] = [
+        "Google", "Genshin Impact", "Map", "Earth", "Music",
+        "Minecraft Java", "Hello, world!", "Python", "Human", "Youtube",
+        "Rust", "T-Red", "ASMR", "Google Earth", "Map Minecraft",
+        "Homosapien", "Gmail", "Wikipedia", "Github", "Images",
+        "Anime", "Video", "Assembly", "Honkai Impact 3rd", "Honkai Star Rail",
+        "Minecraft Bedrock", "Wikimedia", "Star wars", "Animator", "Alan Walker",
+        "Green Earth", "Zombie", "Fast", "Fact", "Alan Becker",
+        "Google Map", "Microsoft", "Apple", "Bad Apple!!", "Moon",
+        "Profile", "Project", "Object", "Drive", "Alone",
+        "Hello you", "Java", "JavaScript", "Animation", "Google Search"
+    ];
+
+    let mut keyword: String = String::new();
+    let read_keyword: Result<usize, std::io::Error> = std::io::stdin().read_line(&mut keyword);
+    if let Err(read_error) = read_keyword {
+        println!("Lỗi đọc dữ liệu: {}", read_error);
+        return;
     }
-    {
-        let word: u8 = 74;  // 01001010 = 74
-        let shift: u8 = 3;  // 00001000 = shift 3
-        
-        //  Kết quả mong muốn: 01000010 = 66
-        let result: u8 = support::_toggle(word, shift);
-        println!("Result: {0} / Bit: {0:0b}", result);
-    }
-    {
-        let word: u8 = 74;  // 01001010 = 74
-        let shift: u8 = 6;  // 01000000 = shift 6
-        
-        //  Kết quả mong muốn: 00000001 = 1
-        let result: u8 = support::_read(word, shift);
-        println!("Result: {0} / Bit: {0:0b}", result);
-    }
+
+    let result: Vec<&str> = support::_search_from_list(&keyword.trim(), list_search.to_vec());
+    println!("Result: {:?}", result);
+
+    support::_sorted_str(&mut list_search);
+    println!("Sorted str: {:?}", list_search);
+
+    let mut array_i64: [i64; 10] = [9, 3, 6, 5, 4, 7, 2, 1, 8, 0];
+    support::_sorted_i64(&mut array_i64);
+    println!("Sorted i64: {:?}", array_i64);
+
+    let mut array_u64: [u64; 10] = [8342, 392, 535, 72398, 202, 11, 3872, 5938, 482, 0];
+    support::_sorted_u64(&mut array_u64);
+    println!("Sorted u64: {:?}", array_u64);
+
+    let mut array_f64: [f64; 10] = [0.2, 3.3, 2.1, 4.9, 9.2, 6.5, 2.3, 7.8, 5.6, 1.8];
+    support::_sorted_f64(&mut array_f64);
+    println!("Sorted f64: {:?}", array_f64);
+
+    let fibonacci: u64 = support::_fibonacci(5);
+    println!("Fibonacci: {}", fibonacci);
 }
 
 fn main() {
     let start: std::time::Instant = support::_hello();
     // Code here
-    _d009();
+    _d010();
     support::_the_end(start);
 }

@@ -1,6 +1,7 @@
 use chrono;
 use std;
 
+/// Kiểm tra một chuỗi là số nguyên dương
 pub fn _isdigu(s: &str) -> bool {
     for chr in s.chars() {
         if !('0' <= chr && chr <= '9')
@@ -37,32 +38,6 @@ pub fn _isdigf(s: &str) -> bool {
         }
     }
     return true;
-}
-
-pub fn _lrsorted(array: &mut [i64]) {
-    let n: usize = array.len();
-    for i in 0..n {
-        for j in 0..n - i - 1 {
-            let temp: i64 = array[j];
-                if array[j] > array[j+1] {
-                    array[j] = array[j+1];
-                    array[j+1] = temp;
-            }
-        }
-    }
-}
-
-pub fn _rlsorted(array: &mut [i64]) {
-    let n: usize = array.len();
-    for i in 0..n {
-        for j in 0..n - i - 1 {
-            let temp: i64 = array[j];
-                if array[j] < array[j+1] {
-                    array[j] = array[j+1];
-                    array[j+1] = temp;
-            }
-        }
-    }
 }
 
 pub fn _count(string: &str, sep: &str) -> usize {
@@ -134,12 +109,14 @@ pub fn _the_end(start: std::time::Instant) {
     println!("Running in {} µs", elapsed);
 }
 
+/// Kiểm tra năm nhuận
 pub fn _is_leap_year(year: i64) -> bool {
     return year % 4 == 0
     && (year % 100 != 0
     || year % 400 == 0)
 }
 
+/// Chuyển số tháng thành tên tháng nhận từ 0-11
 pub fn _title_month(month: i64) -> String {
     let res: String = match month {
         0 => String::from("January"),
@@ -160,16 +137,17 @@ pub fn _title_month(month: i64) -> String {
     return res;
 }
 
-pub fn _suffix_day(day: i64) -> String {
+// Trả về hậu tố ngày st, nd, rd, th
+pub fn _suffix_day(day: i64) -> &'static str {
     if 11 <= day && day <= 13 {
-        return String::from("th");
+        return "th";
     }
 
-    let sfx: String = match day % 10 {
-        1 => String::from("st"),
-        2 => String::from("nd"),
-        3 => String::from("rd"),
-        _ => String::from("th")
+    let sfx: &str = match day % 10 {
+        1 => "st",
+        2 => "nd",
+        3 => "rd",
+        _ => "th"
     };
 
     return sfx;
@@ -249,7 +227,7 @@ pub fn _seconds_format(seconds: i64) -> String {
 
     let years: i64 = year_and_day[0];
     let days: i64 = month_and_day[1] + 1;
-    let suffix_day: String = _suffix_day(days);
+    let suffix_day: &str = _suffix_day(days);
     let title_month: String = _title_month(month_and_day[0]);
 
     let hours: i64 = hms[0];
@@ -280,16 +258,17 @@ pub fn _hex8_to_num(c: char) -> u8 {
 }
 
 // Thực hành thao tác bit
-pub fn _set(word: u8, shift: u8) -> u8 {
+
+pub fn _set(word: &mut u8, shift: u8) {
     // 00110110 bây giở cần đặt bit 1 ở vị trí 3
     // 00001000 cần shift 1 << 3
     // --------
     // 00111110
     // Vậy ta sẽ dùng OR
-    return word | (1 << shift);
+    *word |= 1 << shift;
 }
 
-pub fn _clear(word: u8, shift: u8) -> u8 {
+pub fn _clear(word: &mut u8, shift: u8) {
     // 00110110 bây giờ cần xóa bit 1 ở vị trí 1
     // 00000010 cần shift << 1
     // -------- ?
@@ -299,19 +278,147 @@ pub fn _clear(word: u8, shift: u8) -> u8 {
     // Các bit cùng đúng sẽ được giữ lại
 
     // Vậy ta sẽ dùng and + not
-    return word & (!1 << shift);
+    *word &= !1 << shift;
 }
 
-pub fn _toggle(word: u8, shift: u8) -> u8 {
+pub fn _toggle(word: &mut u8, shift: u8) {
     // Về logic rất cơ bản
     // Chuyển 0 thành 1 và 1 thành 0 và ngược lại
     // Ta sẽ chỉ dùng xor
-    return word ^ (1 << shift);
+    *word ^= 1 << shift;
 }
 
-pub fn _read(word: u8, shift: u8) -> u8 {
+pub fn _read(word: &mut u8, shift: u8) {
     // Cái này cũng khá đơn giản
     // Ta shift bit cần đọc về 1
     // Sau đó dùng AND với 1 ta sẽ được giá trị 0 hoặc 1
-    return 1 & (word >> shift);
+    *word = 1 & (*word >> shift);
+}
+
+pub fn _parse_string(string: &str) -> Option<&str> {
+    let length: usize = string.chars().count();
+
+    let mut in_string: bool = false;
+    let mut index: usize = 0;
+    let mut jndex: usize = 0;
+    let substr: Option<&str> = None;
+    while index < length {
+        let chars: char = match string.chars().nth(index) {
+            Some(value) => value,
+            None => {return substr;}
+        };
+
+        if chars == '\"'  {
+            if index != 0 {
+                let is_escape: char = match string.chars().nth(index-1) {
+                    Some(value) => value,
+                    None => {return substr;}
+                };
+
+                // Bỏ qua dấu " được escape
+                if is_escape == '\\' {
+                    index += 1;
+                    continue;
+                }
+            }
+
+            in_string = !in_string;
+            if !in_string {
+                let sub: Option<&str> = string.get(jndex+1..index);
+                return sub;
+            }
+            jndex = index;
+        }
+        
+        index += 1;
+    }
+    return substr;
+}
+
+pub fn _search_from_list(keyword: &str, list_search: Vec<&'static str>) -> Vec<&'static str> {
+    let mut length: usize = 0;
+    for search in list_search.iter() {
+        if search.contains(keyword) {
+            length += 1;
+        }
+    }
+
+    let mut result: Vec<&str> = vec![""; length];
+    let mut index: usize = 0;
+    for search in list_search.iter() {
+        if search.trim().contains(keyword) {
+            result[index] = search;
+            index += 1;
+        }
+    }
+
+    return result;
+}
+
+pub fn _sorted_str(array_str: &mut [&str]) {
+    let length: usize = array_str.len();
+    for i in 0..length-1 {
+        for j in 0..length - i - 1 {
+            let temp: &str = array_str[j];
+            if array_str[j] > array_str[j+1] {
+                array_str[j] = array_str[j+1];
+                array_str[j+1] = temp;
+            }
+        }
+    }
+}
+
+pub fn _sorted_i64(array_i64: &mut [i64]) {
+    let length: usize = array_i64.len();
+    for i in 0..length-1 {
+        for j in 0..length - i - 1 {
+            let temp: i64 = array_i64[j];
+            if array_i64[j] > array_i64[j+1] {
+                array_i64[j] = array_i64[j+1];
+                array_i64[j+1] = temp;
+            }
+        }
+    }
+}
+
+pub fn _sorted_u64(array_u64: &mut [u64]) {
+    let length: usize = array_u64.len();
+    for i in 0..length-1 {
+        for j in 0..length - i - 1 {
+            let temp: u64 = array_u64[j];
+            if array_u64[j] > array_u64[j+1] {
+                array_u64[j] = array_u64[j+1];
+                array_u64[j+1] = temp;
+            }
+        }
+    }
+}
+
+pub fn _sorted_f64(array_f64: &mut [f64]) {
+    let length: usize = array_f64.len();
+    for i in 0..length-1 {
+        for j in 0..length - i - 1 {
+            let temp: f64 = array_f64[j];
+            if array_f64[j] > array_f64[j+1] {
+                array_f64[j] = array_f64[j+1];
+                array_f64[j+1] = temp;
+            }
+        }
+    }
+}
+
+pub fn _factorial(n: usize) -> u64 {
+    let mut total: u64 = 1;
+    for i in 1..n {
+        total *= i as u64;
+    }
+    return total;
+}
+
+pub  fn _fibonacci(n: u64) -> u64 {
+    if n <= 2 {
+        return n;
+    }
+
+    return _fibonacci(n-1) + _fibonacci(n-2);
 }
