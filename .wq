@@ -1,4 +1,1 @@
-[dependencies]
-chrono = "0.4"
-\n
-chrono = { version = "0.4", features = ["serde"] }
+- 02/12/2025, gần đây có một số việc bận đến dự án riêng nên sẽ tạm thời không commit gì thêm.
